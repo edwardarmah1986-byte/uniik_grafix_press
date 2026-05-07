@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <title>Login</title>
+
+  <style>
+
+    body{
+      font-family:Poppins;
+      background:#f3f4f6;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
+    }
+
+    .box{
+      background:white;
+      padding:40px;
+      width:320px;
+      border-radius:15px;
+      box-shadow:0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    input{
+      width:100%;
+      padding:12px;
+      margin:10px 0;
+      border-radius:10px;
+      border:1px solid #ddd;
+    }
+
+    button{
+      width:100%;
+      padding:12px;
+      border:none;
+      border-radius:10px;
+      background:#3b82f6;
+      color:white;
+      font-weight:bold;
+      cursor:pointer;
+    }
+
+    h2{
+      text-align:center;
+      margin-bottom:20px;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+  <h2>UNIIK LOGIN</h2>
+
+  <input
+    type="text"
+    id="username"
+    placeholder="Username"
+  >
+
+  <input
+    type="password"
+    id="password"
+    placeholder="Password"
+  >
+
+  <button onclick="login()">
+    Login
+  </button>
+
+</div>
+
+<script>
+
+async function login() {
+
+  const username =
+    document.getElementById('username').value;
+
+  const password =
+    document.getElementById('password').value;
+
+  try {
+
+    const res = await fetch('/api/login', {
+
+      method: 'POST',
+
+      headers: {
+        'Content-Type': 'application/json'
+      },
+
+      body: JSON.stringify({
+        username,
+        password
+      })
+
+    });
+
+    const data = await res.json();
+
+    console.log(data);
+
+    // ===== SUCCESS =====
+    if (data.success) {
+
+      localStorage.setItem(
+
+        'user',
+
+        JSON.stringify({
+
+          username:
+            data.username || username,
+
+          role:
+            data.role || 'admin'
+
+        })
+
+      );
+
+      // REDIRECT
+      window.location.href =
+        '/orders.html';
+
+    } else {
+
+      alert(
+        data.message || 'Invalid login'
+      );
+
+    }
+
+  } catch (err) {
+
+    console.error(
+      'Login Error:',
+      err
+    );
+
+    alert('Server error');
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>

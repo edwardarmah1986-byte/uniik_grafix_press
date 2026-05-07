@@ -1,0 +1,1701 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>UNIIK POS Dashboard</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+
+    @media(max-width:900px){
+
+      .analytics-grid{
+        grid-template-columns:1fr;
+      }
+
+    }
+
+    .cart-box{
+      background:#fff;
+      padding:15px;
+      border-radius:12px;
+      margin:20px 0;
+    }
+
+    .cart-item{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:10px;
+      border-bottom:1px solid #eee;
+    }
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    body{
+      font-family:'Poppins',sans-serif;
+      background:#f3f4f6;
+      color:#111827;
+      padding:20px;
+      transition:0.3s;
+    }
+
+    .dark{
+      background:#111827;
+      color:#f9fafb;
+    }
+
+    .container{
+      max-width:1400px;
+      margin:auto;
+    }
+
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+      margin-bottom:20px;
+      gap:10px;
+    }
+
+    .title h1{
+      font-size:28px;
+    }
+
+    .title p{
+      color:#6b7280;
+      font-size:14px;
+    }
+
+    .dark .title p{
+      color:#d1d5db;
+    }
+
+    .clock{
+      font-size:15px;
+      font-weight:600;
+    }
+
+    .top-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    button{
+      border:none;
+      padding:12px 16px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:600;
+      transition:0.2s;
+    }
+
+    button:hover{
+      transform:translateY(-2px);
+    }
+
+    .dark-btn{
+      background:#111827;
+      color:white;
+    }
+
+    .export-btn{
+      background:#10b981;
+      color:white;
+    }
+
+    .cards{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:15px;
+      margin-bottom:25px;
+    }
+
+    .card{
+      background:white;
+      padding:20px;
+      border-radius:16px;
+      box-shadow:0 5px 15px rgba(0,0,0,0.06);
+    }
+
+    .dark .card{
+      background:#1f2937;
+    }
+
+    .card h3{
+      font-size:14px;
+      margin-bottom:10px;
+      color:#6b7280;
+    }
+
+    .dark .card h3{
+      color:#d1d5db;
+    }
+
+    .card p{
+      font-size:28px;
+      font-weight:700;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:350px 1fr;
+      gap:20px;
+    }
+
+    @media(max-width:900px){
+      .grid{
+        grid-template-columns:1fr;
+      }
+    }
+
+    .panel{
+      background:white;
+      padding:20px;
+      border-radius:16px;
+      box-shadow:0 5px 15px rgba(0,0,0,0.06);
+    }
+
+    .dark .panel{
+      background:#1f2937;
+    }
+
+    .panel h2{
+      margin-bottom:15px;
+      font-size:22px;
+    }
+
+    .form-group{
+      margin-bottom:15px;
+    }
+
+    .form-group label{
+      display:block;
+      margin-bottom:6px;
+      font-size:14px;
+      font-weight:500;
+    }
+
+    input,select{
+      width:100%;
+      padding:12px;
+      border-radius:10px;
+      border:1px solid #d1d5db;
+      font-size:14px;
+    }
+
+    .dark input,
+    .dark select{
+      background:#374151;
+      color:white;
+      border:1px solid #4b5563;
+    }
+
+    .save-btn{
+      width:100%;
+      background:#3b82f6;
+      color:white;
+      margin-top:10px;
+    }
+
+    .search-box{
+      margin-bottom:15px;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      overflow:hidden;
+      border-radius:12px;
+    }
+
+    th{
+      background:#10b981;
+      color:white;
+      padding:14px;
+      text-align:left;
+      font-size:14px;
+    }
+
+    td{
+      padding:14px;
+      border-bottom:1px solid #e5e7eb;
+      font-size:14px;
+    }
+
+    .dark td{
+      border-bottom:1px solid #374151;
+    }
+
+    tr:hover{
+      background:rgba(0,0,0,0.03);
+    }
+
+    .dark tr:hover{
+      background:rgba(255,255,255,0.05);
+    }
+
+    .delete-btn{
+      background:#ef4444;
+      color:white;
+      padding:8px 12px;
+      border-radius:8px;
+      font-size:12px;
+    }
+
+    .status{
+      margin-top:10px;
+      font-size:14px;
+      font-weight:600;
+      color:#10b981;
+    }
+
+    .empty{
+      text-align:center;
+      padding:30px;
+      color:#6b7280;
+    }
+
+  </style>
+</head>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<body>
+
+<div class="container">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+
+    <div class="title">
+      <h1>UNIIK POS Dashboard</h1>
+      <p>Sales & Order Management System</p>
+    </div>
+
+    <div class="clock" id="clock"></div>
+
+    <div class="top-actions">
+      <button class="dark-btn" onclick="toggleDarkMode()">
+        Toggle Dark Mode
+      </button>
+
+      <button class="export-btn" onclick="exportCSV()">
+        Export Orders CSV
+      </button>
+
+      <button
+        style="
+          background:#ef4444;
+          color:white;
+        "
+        onclick="clearAllOrders()"
+      >
+        Clear Orders
+      </button>
+
+      <button
+        style="
+          background:#ef4444;
+          color:white;
+          padding:12px 16px;
+          border:none;
+          border-radius:10px;
+          font-weight:600;
+          cursor:pointer;
+        "
+        onclick="logout()"
+      >
+        Logout
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="cards">
+
+    <div class="card">
+      <h3>Total Orders</h3>
+      <p id="totalOrders">0</p>
+    </div>
+
+    <div class="card">
+      <h3>Total Sales</h3>
+      <p id="totalSales">GHS 0</p>
+    </div>
+
+    <div class="card">
+      <h3>Products</h3>
+      <p id="totalProducts">0</p>
+    </div>
+
+    <div class="card">
+      <h3>Total Customers</h3>
+      <p id="totalCustomers">0</p>
+    </div>
+
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="grid">
+
+    <!-- CREATE ORDER -->
+    <div class="panel">
+
+      <h2>Create Order</h2>
+
+      <div class="cart-box">
+
+        <h3>🛒 Cart</h3>
+
+        <div id="cartItems"></div>
+
+        <h3>
+          Total:
+          <span id="cartTotal">
+            GHS 0
+          </span>
+        </h3>
+
+        <div
+          style="
+            display:flex;
+            gap:10px;
+            flex-wrap:wrap;
+            margin-top:10px;
+          "
+        >
+
+          <button onclick="checkoutCart()">
+            Checkout
+          </button>
+
+          <button onclick="printOnlyCart()">
+            Print Cart
+          </button>
+
+          <button onclick="clearCart()">
+            Clear Cart
+          </button>
+
+          <button onclick="refreshDashboard()">
+            Refresh
+          </button>
+
+        </div>
+
+      </div>
+
+      <div class="form-group">
+        <label>Product</label>
+        <select id="product"></select>
+      </div>
+
+      <div class="form-group">
+        <label>Price</label>
+        <input type="number" id="price" placeholder="Enter price">
+      </div>
+
+      <input
+        type="number"
+        id="qty"
+        placeholder="Quantity"
+        value="1"
+      />
+
+      <div class="form-group">
+        <label>Customer Name</label>
+        <input type="text" id="customer" placeholder="Enter customer name">
+      </div>
+
+      <button class="save-btn" onclick="createOrder()">
+        Save Order
+      </button>
+
+      <div class="status" id="status"></div>
+
+    </div>
+
+    <!-- TABLE -->
+    <div class="panel">
+
+      <div class="search-box">
+        <input
+          type="text"
+          id="search"
+          placeholder="Search customer or product"
+          onkeyup="loadOrders()"
+        >
+      </div>
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Customer</th>
+            <th>Staff</th>
+            <th>Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        <tbody id="ordersTable">
+          <tr>
+            <td colspan="7" class="empty">
+              No orders found
+            </td>
+          </tr>
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+  <!-- ANALYTICS -->
+
+  <div
+    class="analytics-grid"
+    style="
+      display:grid;
+      grid-template-columns:2fr 1fr;
+      gap:20px;
+      margin-bottom:20px;
+    "
+  >
+
+    <!-- SALES CHART -->
+    <div class="panel">
+
+      <h2>Sales Analytics</h2>
+
+      <canvas
+        id="salesChart"
+        height="120"
+      ></canvas>
+
+    </div>
+
+    <!-- PRODUCTS CHART -->
+    <div class="panel">
+
+      <h2>Top Products</h2>
+
+      <canvas
+        id="productsChart"
+        height="120"
+      ></canvas>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+  // ============================
+  // 🔐 LOAD USER SESSION
+  // ============================
+  let user = null;
+
+  try {
+
+    user = JSON.parse(
+
+      localStorage.getItem('user') || 'null'
+
+    );
+
+  } catch (err) {
+
+    console.error(
+      'Session Error:',
+      err
+    );
+
+    localStorage.removeItem('user');
+
+  }
+
+  // ============================
+  // 🔒 CHECK LOGIN
+  // ============================
+  if (
+
+    !user ||
+
+    !user.username
+
+  ) {
+
+    window.location.href =
+      '/login.html';
+
+  }
+
+  // ============================
+  // 🛒 CART
+  // ============================
+  let cart = [];
+
+  // ============================
+  // 🔄 AUTO REFRESH
+  // ============================
+  setInterval(async () => {
+
+    try {
+
+      await loadOrders();
+
+      await loadDashboardStats();
+
+      // ===== OPTIONAL CHARTS =====
+      if (typeof loadSalesChart === 'function') {
+
+        await loadSalesChart();
+
+      }
+
+      if (typeof loadProductsChart === 'function') {
+
+        await loadProductsChart();
+
+      }
+
+    } catch (err) {
+
+      console.error(
+        'Auto Refresh Error:',
+        err
+      );
+
+    }
+
+  }, 5000);
+
+  // ============================
+  // 🕒 LIVE CLOCK
+  // ============================
+  function updateClock() {
+
+    const clock =
+      document.getElementById('clock');
+
+    if (!clock) return;
+
+    clock.innerText =
+      new Date().toLocaleString();
+
+  }
+
+  // ===== START CLOCK =====
+  setInterval(updateClock, 1000);
+
+  updateClock();
+
+  // DARK MODE
+  function toggleDarkMode(){
+    document.body.classList.toggle('dark');
+  }
+
+  // LOAD PRODUCTS
+  async function loadProducts(){
+
+    const res = await fetch('/api/products');
+    const products = await res.json();
+
+    const select = document.getElementById('product');
+
+    select.innerHTML = '';
+
+    products.forEach(p=>{
+
+      select.innerHTML += `
+        <option value="${p.name}" data-price="${p.price}">
+          ${p.name}
+        </option>
+      `;
+
+    });
+
+    document.getElementById('totalProducts').innerText =
+      products.length;
+
+    updatePrice();
+  }
+
+  // AUTO PRICE
+  function updatePrice(){
+
+    const select = document.getElementById('product');
+
+    const price =
+      select.options[select.selectedIndex]
+      ?.dataset?.price || 0;
+
+    document.getElementById('price').value = price;
+  }
+
+  document.getElementById('product')
+    .addEventListener('change',updatePrice);
+
+  // CREATE ORDER
+  function createOrder() {
+
+    const productSelect =
+      document.getElementById('product');
+
+    const product =
+      productSelect.options[
+        productSelect.selectedIndex
+      ].text;
+
+    const price =
+      Number(document.getElementById('price').value);
+
+    const qty =
+      Number(document.getElementById('qty').value);
+
+    const customer =
+      document.getElementById('customer').value;
+
+    if (!product || !price || qty <= 0) {
+      alert('Enter valid values');
+      return;
+    }
+
+    const subtotal = price * qty;
+
+    cart.push({
+      product,
+      price,
+      qty,
+      subtotal,
+      customer
+    });
+
+    renderCart();
+  }
+
+  function renderCart() {
+
+    let html = '';
+
+    let total = 0;
+
+    cart.forEach((item, index) => {
+
+      total += Number(item.subtotal);
+
+      html += `
+
+        <div class="cart-item">
+
+          <div>
+
+            <strong>
+              ${item.product}
+            </strong>
+
+            <br>
+
+            ${item.qty} × GHS ${item.price}
+
+          </div>
+
+          <div>
+
+            <strong>
+              GHS ${item.subtotal.toFixed(2)}
+            </strong>
+
+            <br>
+
+            <button onclick="removeCart(${index})">
+              X
+            </button>
+
+          </div>
+
+        </div>
+
+      `;
+    });
+
+    document.getElementById('cartItems').innerHTML =
+      html;
+
+    document.getElementById('cartTotal').innerText =
+      'GHS ' + total.toFixed(2);
+  }
+
+  function removeCart(index) {
+
+    cart.splice(index, 1);
+
+    renderCart();
+  }
+
+  async function checkoutCart() {
+
+    // ===== VALIDATION =====
+    if (cart.length === 0) {
+
+      alert('Cart empty');
+
+      return;
+
+    }
+
+    try {
+
+      // ===== SAVE ORDERS =====
+      for (const item of cart) {
+
+        await fetch('/api/orders', {
+
+          method: 'POST',
+
+          headers: {
+            'Content-Type': 'application/json'
+          },
+
+          body: JSON.stringify({
+
+            product:
+              item.product + ' x' + item.qty,
+
+            price:
+              item.subtotal,
+
+            customer:
+              item.customer,
+
+            staff:
+              'admin'
+
+          })
+
+        });
+
+      }
+
+      // ============================
+      // ✅ LOGIN SUCCESS
+      // ============================
+      if (data.success) {
+
+        // SAVE USER SESSION
+        localStorage.setItem(
+
+          'user',
+
+          JSON.stringify({
+
+            username:
+              data.username || username,
+
+            role:
+              data.role || 'admin'
+
+          })
+
+        );
+
+        // REDIRECT
+        window.location.href =
+          '/orders.html';
+
+      } else {
+
+        alert(
+          data.message || 'Invalid login'
+        );
+
+      }
+
+      // ===== COPY RECEIPT ITEMS =====
+      const receiptCart = [...cart];
+
+      // ===== CLEAR CART =====
+      cart = [];
+
+      renderCart();
+
+      // ===== REFRESH DASHBOARD =====
+      await loadOrders();
+
+      await loadDashboardStats();
+
+      await loadSalesChart();
+
+      await loadProductsChart();
+
+      // ===== PRINT RECEIPT =====
+      printCartReceipt(receiptCart);
+
+    } catch (err) {
+
+      console.error(
+        'Checkout Error:',
+        err
+      );
+
+      alert('Checkout failed');
+
+    }
+
+  }
+
+
+  // ===== DELETE ORDER =====
+  async function deleteOrder(id) {
+
+    const ok =
+      confirm('Delete order?');
+
+    if (!ok) {
+
+      return;
+
+    }
+
+    try {
+
+      await fetch(
+        '/api/orders/' + id,
+        {
+          method: 'DELETE'
+        }
+      );
+
+      // ===== REFRESH =====
+      await loadOrders();
+
+      await loadDashboardStats();
+
+      await loadSalesChart();
+
+      await loadProductsChart();
+
+    } catch (err) {
+
+      console.error(
+        'Delete Error:',
+        err
+      );
+
+      alert('Delete failed');
+
+    }
+
+  }
+
+  // LOAD ORDERS
+  async function loadOrders() {
+
+    try {
+
+      // ===== FETCH ORDERS =====
+      const res = await fetch('/api/orders');
+
+      let orders = await res.json();
+
+      // ===== SEARCH =====
+      const search =
+        document.getElementById('search')
+        .value
+        .toLowerCase();
+
+      if (search) {
+
+        orders = orders.filter(o =>
+
+          (o.customer || '')
+            .toLowerCase()
+            .includes(search)
+
+          ||
+
+          (o.product || '')
+            .toLowerCase()
+            .includes(search)
+
+        );
+
+      }
+
+      // ===== TABLE =====
+      const table =
+        document.getElementById('ordersTable');
+
+      table.innerHTML = '';
+
+      // ===== EMPTY =====
+      if (!orders.length) {
+
+        table.innerHTML = `
+          <tr>
+            <td colspan="7" class="empty">
+              No orders found
+            </td>
+          </tr>
+        `;
+
+        return;
+      }
+
+      // ===== BUILD TABLE =====
+      orders.forEach(o => {
+
+        table.innerHTML += `
+
+          <tr>
+
+            <td>${o.id}</td>
+
+            <td>${o.product}</td>
+
+            <td>
+              GHS ${Number(o.price).toFixed(2)}
+            </td>
+
+            <td>${o.customer || '-'}</td>
+
+            <td>${o.staff || '-'}</td>
+
+            <td>${o.date || '-'}</td>
+
+            <td>
+
+              <button onclick="printReceipt(${o.id})">
+                Print
+              </button>
+
+              <button
+                class="delete-btn"
+                onclick="deleteOrder(${o.id})"
+              >
+                Delete
+              </button>
+
+            </td>
+
+          </tr>
+
+        `;
+
+      });
+
+    } catch (err) {
+
+      console.error(
+        'Load Orders Error:',
+        err
+      );
+
+    }
+
+  }
+  
+  async function loadDashboardStats() {
+
+    try {
+
+      // ===== ORDERS =====
+      const orderRes =
+        await fetch('/api/orders');
+
+      const orders =
+        await orderRes.json();
+
+      // ===== PRODUCTS =====
+      const productRes =
+        await fetch('/api/products');
+
+      const products =
+        await productRes.json();
+
+      // ===== TOTAL ORDERS =====
+      document.getElementById('totalOrders').innerText =
+        orders.length;
+
+      // ===== TOTAL SALES =====
+      let sales = 0;
+
+      orders.forEach(o => {
+
+        sales += Number(o.price || 0);
+
+      });
+
+      document.getElementById('totalSales').innerText =
+        'GHS ' + sales.toFixed(2);
+
+      // ===== PRODUCTS =====
+      document.getElementById('totalProducts').innerText =
+        products.length;
+
+      // ===== CUSTOMERS =====
+      const customers = new Set();
+
+      orders.forEach(o => {
+
+        if (o.customer) {
+
+          customers.add(o.customer);
+
+        }
+
+      });
+
+      document.getElementById('totalCustomers').innerText =
+        customers.size;
+
+    } catch (err) {
+
+      console.error(
+        'Dashboard Error:',
+        err
+      );
+
+    }
+
+  }
+
+
+  // EXPORT CSV
+  async function exportCSV(){
+
+    const res = await fetch('/api/orders');
+
+    const orders = await res.json();
+
+    let csv =
+      'ID,Product,Price,Customer,Staff,Date\n';
+
+    orders.forEach(o=>{
+
+      csv +=
+        `${o.id},${o.product},${o.price},${o.customer},${o.staff},${o.date}\n`;
+
+    });
+
+    const blob = new Blob(
+      [csv],
+      { type:'text/csv' }
+    );
+
+    const a = document.createElement('a');
+
+    a.href = URL.createObjectURL(blob);
+
+    a.download = 'orders.csv';
+
+    a.click();
+  }
+
+  async function printReceipt(id) {
+
+    try {
+
+      const res = await fetch('/api/orders');
+      const orders = await res.json();
+
+      const order = orders.find(o => o.id == id);
+
+      if (!order) {
+        alert('Order not found');
+        return;
+      }
+
+      const receiptWindow = window.open('', '', 'width=350,height=600');
+
+      receiptWindow.document.write(`
+
+        <html>
+
+        <head>
+          <title>Receipt</title>
+
+          <style>
+
+            body{
+              font-family: monospace;
+              padding:20px;
+            }
+
+            .center{
+              text-align:center;
+            }
+
+            hr{
+              border:none;
+              border-top:1px dashed #000;
+              margin:10px 0;
+            }
+
+            .row{
+              display:flex;
+              justify-content:space-between;
+              margin:5px 0;
+            }
+
+          </style>
+
+        </head>
+
+        <body>
+
+          <div class="center">
+
+            <h2>UNIIK GRAFIX PRESS</h2>
+
+            <p>
+              Printing Services
+            </p>
+
+          </div>
+
+          <hr>
+
+          <div class="row">
+            <span>Invoice:</span>
+            <span>#${order.id}</span>
+          </div>
+
+          <div class="row">
+            <span>Date:</span>
+            <span>${new Date(order.date).toLocaleString()}</span>
+          </div>
+
+          <div class="row">
+            <span>Customer:</span>
+            <span>${order.customer}</span>
+          </div>
+
+          <div class="row">
+            <span>Staff:</span>
+            <span>${order.staff}</span>
+          </div>
+
+          <hr>
+
+          <div class="row">
+            <span>${order.product}</span>
+            <span>GHS ${Number(order.price).toFixed(2)}</span>
+          </div>
+
+          <hr>
+
+          <div class="row">
+            <strong>Total</strong>
+            <strong>
+              GHS ${Number(order.price).toFixed(2)}
+            </strong>
+          </div>
+
+          <hr>
+
+          <div class="center">
+            <p>Thank You 🙏</p>
+          </div>
+
+        </body>
+
+        </html>
+
+      `);
+
+      receiptWindow.document.close();
+
+      receiptWindow.print();
+
+    } catch (err) {
+
+      console.error(err);
+
+      alert('Receipt error');
+
+    }
+  }
+
+ function printCartReceipt(cartItems) {
+
+  // ===== VALIDATION =====
+  if (!cartItems || cartItems.length === 0) {
+    return;
+  }
+
+  // ===== TOTALS =====
+  let total = 0;
+  let totalQty = 0;
+  let itemsHTML = '';
+
+  // ===== BUILD ITEMS =====
+  cartItems.forEach(item => {
+
+    const qty = Number(item.qty) || 1;
+    const price = Number(item.price) || 0;
+    const subtotal = Number(item.subtotal) || (qty * price);
+
+    total += subtotal;
+    totalQty += qty;
+
+    itemsHTML += `
+      <div class="row">
+
+        <div>
+          <strong>${item.product}</strong><br>
+          ${qty} × GHS ${price.toFixed(2)}
+        </div>
+
+        <div>
+          GHS ${subtotal.toFixed(2)}
+        </div>
+
+      </div>
+    `;
+  });
+
+  // ===== INFO =====
+  const invoice = 'INV-' + Date.now();
+
+  const customer =
+    cartItems[0]?.customer || 'Walk-in';
+
+  const cashier = 'admin';
+
+  // ===== OPEN PRINT WINDOW =====
+  const receiptWindow = window.open(
+    '',
+    '',
+    'width=350,height=650'
+  );
+
+  // ===== RECEIPT HTML =====
+  receiptWindow.document.write(`
+    <html>
+
+    <head>
+
+      <title>Invoice Receipt</title>
+
+      <style>
+
+        body{
+          font-family: monospace;
+          padding:15px;
+          color:#000;
+        }
+
+        .center{
+          text-align:center;
+        }
+
+        .row{
+          display:flex;
+          justify-content:space-between;
+          margin:8px 0;
+          font-size:14px;
+        }
+
+        hr{
+          border:none;
+          border-top:1px dashed #000;
+          margin:10px 0;
+        }
+
+        h2{
+          margin:0;
+        }
+
+      </style>
+
+    </head>
+
+    <body>
+
+      <!-- HEADER -->
+      <div class="center">
+
+        <h2>UNIIK GRAFIX PRESS</h2>
+
+        <p>
+          Sales & Printing Services
+        </p>
+
+      </div>
+
+      <hr>
+
+      <!-- RECEIPT INFO -->
+      <div class="row">
+        <span>Invoice:</span>
+        <span>${invoice}</span>
+      </div>
+
+      <div class="row">
+        <span>Date:</span>
+        <span>${new Date().toLocaleString()}</span>
+      </div>
+
+      <div class="row">
+        <span>Customer:</span>
+        <span>${customer}</span>
+      </div>
+
+      <div class="row">
+        <span>Cashier:</span>
+        <span>${cashier}</span>
+      </div>
+
+      <hr>
+
+      <!-- ITEMS -->
+      ${itemsHTML}
+
+      <hr>
+
+      <!-- TOTALS -->
+      <div class="row">
+        <strong>Total Qty</strong>
+        <strong>${totalQty}</strong>
+      </div>
+
+      <div class="row">
+        <strong>Grand Total</strong>
+        <strong>
+          GHS ${total.toFixed(2)}
+        </strong>
+      </div>
+
+      <hr>
+
+      <!-- FOOTER -->
+      <div class="center">
+
+        <p>
+          Thank You 🙏
+        </p>
+
+      </div>
+
+    </body>
+
+    </html>
+  `);
+
+  // ===== FINALIZE =====
+  receiptWindow.document.close();
+
+  receiptWindow.focus();
+
+  receiptWindow.print();
+}
+
+function logout(){
+
+  localStorage.removeItem('user');
+
+  window.location = '/login.html';
+
+}
+
+let salesChart;
+
+async function loadSalesChart() {
+
+  try {
+
+    const res =
+      await fetch('/api/orders');
+
+    const orders =
+      await res.json();
+
+    const dailySales = {};
+
+    orders.forEach(order => {
+
+      const date =
+        new Date(order.date)
+        .toLocaleDateString();
+
+      if (!dailySales[date]) {
+
+        dailySales[date] = 0;
+
+      }
+
+      dailySales[date] +=
+        Number(order.price || 0);
+
+    });
+
+    const labels =
+      Object.keys(dailySales);
+
+    const values =
+      Object.values(dailySales);
+
+    const ctx =
+      document.getElementById('salesChart');
+
+    // DESTROY OLD CHART
+    if (salesChart) {
+
+      salesChart.destroy();
+
+    }
+
+    salesChart = new Chart(ctx, {
+
+      type: 'bar',
+
+      data: {
+
+        labels,
+
+        datasets: [{
+
+          label: 'Daily Sales',
+
+          data: values,
+
+          borderWidth: 1
+
+        }]
+
+      },
+
+      options: {
+
+        responsive: true,
+
+        scales: {
+
+          y: {
+
+            beginAtZero: true
+
+          }
+
+        }
+
+      }
+
+    });
+
+  } catch (err) {
+
+    console.error(
+      'Chart Error:',
+      err
+    );
+
+  }
+
+}
+
+let productsChart;
+
+async function loadProductsChart() {
+
+  try {
+
+    const res =
+      await fetch('/api/orders');
+
+    const orders =
+      await res.json();
+
+    const productMap = {};
+
+    // ===== COUNT PRODUCTS =====
+    orders.forEach(order => {
+
+      const product =
+        order.product || 'Unknown';
+
+      if (!productMap[product]) {
+
+        productMap[product] = 0;
+
+      }
+
+      productMap[product] +=
+        Number(order.price || 0);
+
+    });
+
+    // ===== LABELS =====
+    const labels =
+      Object.keys(productMap);
+
+    const values =
+      Object.values(productMap);
+
+    const ctx =
+      document.getElementById(
+        'productsChart'
+      );
+
+    // ===== DESTROY OLD =====
+    if (productsChart) {
+
+      productsChart.destroy();
+
+    }
+
+    // ===== CREATE CHART =====
+    productsChart = new Chart(ctx, {
+
+      type: 'doughnut',
+
+      data: {
+
+        labels,
+
+        datasets: [{
+
+          label: 'Top Products',
+
+          data: values,
+
+          borderWidth: 1
+
+        }]
+
+      },
+
+      options: {
+
+        responsive: true
+
+      }
+
+    });
+
+  } catch (err) {
+
+    console.error(
+      'Products Chart Error:',
+      err
+    );
+
+  }
+
+}
+
+function clearCart() {
+
+  const ok =
+    confirm('Clear cart?');
+
+  if (!ok) {
+
+    return;
+
+  }
+
+  cart = [];
+
+  renderCart();
+
+}
+
+function printOnlyCart() {
+
+  if (cart.length === 0) {
+
+    alert('Cart empty');
+
+    return;
+
+  }
+
+  printCartReceipt(cart);
+
+}
+
+async function refreshDashboard() {
+
+  await loadOrders();
+
+  await loadDashboardStats();
+
+  await loadSalesChart();
+
+  await loadProductsChart();
+
+  alert('Dashboard refreshed');
+
+}
+
+async function clearAllOrders() {
+
+  const ok =
+    confirm(
+      'Delete ALL orders?'
+    );
+
+  if (!ok) {
+
+    return;
+
+  }
+
+  try {
+
+    await fetch('/api/orders', {
+
+      method:'DELETE'
+
+    });
+
+    await refreshDashboard();
+
+    alert('All orders cleared');
+
+  } catch (err) {
+
+    console.error(err);
+
+    alert('Failed');
+
+  }
+
+}
+
+  // INIT
+  loadProducts();
+
+  loadOrders();
+
+  loadDashboardStats();
+
+  loadSalesChart();
+
+  loadProductsChart();
+
+</script>
+
+</body>
+</html>
